@@ -1,0 +1,113 @@
+{
+  "common": {
+    "loading": "Loading...",
+    "error": "Error",
+    "success": "Success",
+    "cancel": "Cancel",
+    "confirm": "Confirm",
+    "retry": "Retry",
+    "close": "Close",
+    "download": "Download",
+    "viewProfile": "View Profile",
+    "viewAll": "View All"
+  },
+  "header": {
+    "title": "IGExportGuru",
+    "subtitle": "Export Instagram Lists Effortlessly"
+  },
+  "hero": {
+    "title": "Export Instagram Lists",
+    "subtitle": "Effortlessly",
+    "description": "Quick and secure tool to export Instagram followers and following lists to Excel format",
+    "features": {
+      "oneClick": "One-Click Export",
+      "excelFormat": "Excel Format",
+      "securePrivate": "Secure & Private",
+      "multiLanguage": "Multi-Language"
+    },
+    "stats": {
+      "users": "Happy Users",
+      "exports": "Successful Exports",
+      "successRate": "Success Rate",
+      "avgTime": "Average Time"
+    }
+  },
+  "export": {
+    "inputLabel": "Instagram Username or URL",
+    "inputPlaceholder": "Enter @username or instagram.com/username",
+    "followers": "Followers",
+    "following": "Following",
+    "exportButton": "Export (Max {{maxCount}} users)",
+    "progress": "Processing... {{progress}}%",
+    "downloadReady": "Download ready!",
+    "securityNote": "We prioritize your privacy - no data is stored on our servers",
+    "limitNote": "Free users can export up to {{maxCount}} users per request"
+  },
+  "progress": {
+    "pending": "Pending",
+    "analyzing": "Analyzing Account",
+    "scraping": "Fetching Data",
+    "processing": "Processing Data",
+    "completed": "Completed",
+    "failed": "Failed",
+    "preparingTask": "Initializing export task...",
+    "fetchingAccountInfo": "Getting account information...",
+    "fetchingFollowersList": "Getting followers list...",
+    "generatingExcelFile": "Generating Excel file...",
+    "exportCompleted": "Export completed successfully!",
+    "exportFailed": "Error occurred during export",
+    "progressLabel": "Progress: {{progress}}%",
+    "estimatedTime": "Estimated remaining time: {{time}}",
+    "fileReady": "Excel file is ready, click the download button to get the file",
+    "checkUsernameAndRetry": "Please check if the username is correct, or try again later",
+    "steps": {
+      "analyzing": "Analyze Account",
+      "scraping": "Fetch Data",
+      "processing": "Process Data",
+      "completed": "Complete Export"
+    }
+  },
+  "dataPreview": {
+    "followersTitle": "Followers List",
+    "followingTitle": "Following List",
+    "totalUsers": "Found {{count}} users",
+    "showingFirst": "(showing first {{count}})",
+    "noData": "No Data",
+    "noDataDescription": "Please enter an Instagram username and click export first",
+    "exportFailed": "Export Failed",
+    "gettingData": "Getting data...",
+    "table": {
+      "username": "Username",
+      "fullName": "Display Name",
+      "verified": "Verification Status",
+      "actions": "Actions",
+      "verified_yes": "Verified",
+      "verified_no": "Not Verified"
+    },
+    "pagination": {
+      "showing": "Showing {{start}} - {{end}} of {{total}} items",
+      "page": "Page {{current}} of {{total}}"
+    },
+    "downloadInfo": "File will be saved as: {{filename}}",
+    "downloadLimit": "(only exporting first 200 users)"
+  },
+  "validation": {
+    "invalidUsername": "Please enter a valid Instagram username",
+    "usernameRequired": "Instagram username is required",
+    "networkError": "Network error. Please try again.",
+    "unexpectedError": "An unexpected error occurred"
+  },
+  "errors": {
+    "accountNotFound": "Account not found",
+    "privateAccount": "This account is private",
+    "rateLimitExceeded": "Too many requests. Please try again later.",
+    "serverError": "Server error. Please try again later.",
+    "unknownError": "Unknown error occurred"
+  },
+  "footer": {
+    "madeWith": "Made with",
+    "forCreators": "for Instagram creators and marketers",
+    "copyright": "© {{year}} IGExportGuru. All rights reserved.",
+    "privacyNote": "Privacy-first design, no data retention"
+  }
+} 

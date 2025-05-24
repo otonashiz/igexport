@@ -1,0 +1,113 @@
+{
+  "common": {
+    "loading": "載入中...",
+    "error": "錯誤",
+    "success": "成功",
+    "cancel": "取消",
+    "confirm": "確認",
+    "retry": "重試",
+    "close": "關閉",
+    "download": "下載",
+    "viewProfile": "查看主頁",
+    "viewAll": "查看全部"
+  },
+  "header": {
+    "title": "IGExportGuru",
+    "subtitle": "輕鬆導出Instagram列表"
+  },
+  "hero": {
+    "title": "導出Instagram列表",
+    "subtitle": "輕鬆便捷",
+    "description": "快速安全的工具，將Instagram關注者和關注列表導出為Excel格式",
+    "features": {
+      "oneClick": "一鍵導出",
+      "excelFormat": "Excel格式",
+      "securePrivate": "安全私密",
+      "multiLanguage": "多語言支援"
+    },
+    "stats": {
+      "users": "滿意用戶",
+      "exports": "成功導出",
+      "successRate": "成功率",
+      "avgTime": "平均用時"
+    }
+  },
+  "export": {
+    "inputLabel": "Instagram用戶名或連結",
+    "inputPlaceholder": "輸入 @用戶名 或 instagram.com/用戶名",
+    "followers": "關注者",
+    "following": "正在關注",
+    "exportButton": "導出 (最多{{maxCount}}個用戶)",
+    "progress": "處理中... {{progress}}%",
+    "downloadReady": "下載就緒！",
+    "securityNote": "我們保護您的隱私 - 伺服器不儲存任何資料",
+    "limitNote": "免費用戶每次最多可導出{{maxCount}}個用戶"
+  },
+  "progress": {
+    "pending": "準備中",
+    "analyzing": "分析帳戶",
+    "scraping": "獲取資料",
+    "processing": "處理資料",
+    "completed": "完成",
+    "failed": "失敗",
+    "preparingTask": "正在初始化導出任務...",
+    "fetchingAccountInfo": "正在獲取帳戶資訊...",
+    "fetchingFollowersList": "正在獲取關注者列表...",
+    "generatingExcelFile": "正在生成Excel檔案...",
+    "exportCompleted": "導出成功完成！",
+    "exportFailed": "導出過程中出現錯誤",
+    "progressLabel": "進度: {{progress}}%",
+    "estimatedTime": "預計剩餘時間: {{time}}",
+    "fileReady": "Excel檔案已準備就緒，點擊下載按鈕獲取檔案",
+    "checkUsernameAndRetry": "請檢查用戶名是否正確，或稍後重試",
+    "steps": {
+      "analyzing": "分析帳戶",
+      "scraping": "獲取資料",
+      "processing": "處理資料",
+      "completed": "完成導出"
+    }
+  },
+  "dataPreview": {
+    "followersTitle": "關注者列表",
+    "followingTitle": "關注列表",
+    "totalUsers": "共找到 {{count}} 個用戶",
+    "showingFirst": "（顯示前 {{count}} 個）",
+    "noData": "暫無資料",
+    "noDataDescription": "請先輸入Instagram用戶名並點擊導出",
+    "exportFailed": "導出失敗",
+    "gettingData": "正在獲取資料...",
+    "table": {
+      "username": "用戶名",
+      "fullName": "顯示名稱",
+      "verified": "認證狀態",
+      "actions": "操作",
+      "verified_yes": "已認證",
+      "verified_no": "未認證"
+    },
+    "pagination": {
+      "showing": "顯示第 {{start}} - {{end}} 項，共 {{total}} 項",
+      "page": "第 {{current}} 頁，共 {{total}} 頁"
+    },
+    "downloadInfo": "檔案將儲存為: {{filename}}",
+    "downloadLimit": "(僅導出前200個用戶)"
+  },
+  "validation": {
+    "invalidUsername": "請輸入有效的Instagram用戶名",
+    "usernameRequired": "Instagram用戶名為必填項",
+    "networkError": "網路錯誤，請重試。",
+    "unexpectedError": "發生意外錯誤"
+  },
+  "errors": {
+    "accountNotFound": "帳戶不存在",
+    "privateAccount": "此帳戶為私人帳戶",
+    "rateLimitExceeded": "請求過於頻繁，請稍後重試。",
+    "serverError": "伺服器錯誤，請稍後重試。",
+    "unknownError": "發生未知錯誤"
+  },
+  "footer": {
+    "madeWith": "用",
+    "forCreators": "為Instagram創作者和營銷人員打造",
+    "copyright": "© {{year}} IGExportGuru. 保留所有權利。",
+    "privacyNote": "隱私優先設計，不保留資料"
+  }
+} 

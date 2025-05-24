@@ -1,0 +1,113 @@
+{
+  "common": {
+    "loading": "Cargando...",
+    "error": "Error",
+    "success": "Éxito",
+    "cancel": "Cancelar",
+    "confirm": "Confirmar",
+    "retry": "Reintentar",
+    "close": "Cerrar",
+    "download": "Descargar",
+    "viewProfile": "Ver Perfil",
+    "viewAll": "Ver Todo"
+  },
+  "header": {
+    "title": "IGExportGuru",
+    "subtitle": "Exporta Listas de Instagram Fácilmente"
+  },
+  "hero": {
+    "title": "Exporta Listas de Instagram",
+    "subtitle": "Fácilmente",
+    "description": "Herramienta rápida y segura para exportar seguidores y seguidos de Instagram a formato Excel",
+    "features": {
+      "oneClick": "Exportación con Un Clic",
+      "excelFormat": "Formato Excel",
+      "securePrivate": "Seguro y Privado",
+      "multiLanguage": "Multiidioma"
+    },
+    "stats": {
+      "users": "Usuarios Satisfechos",
+      "exports": "Exportaciones Exitosas",
+      "successRate": "Tasa de Éxito",
+      "avgTime": "Tiempo Promedio"
+    }
+  },
+  "export": {
+    "inputLabel": "Nombre de Usuario de Instagram o URL",
+    "inputPlaceholder": "Ingresa @usuario o instagram.com/usuario",
+    "followers": "Seguidores",
+    "following": "Siguiendo",
+    "exportButton": "Exportar (Máx {{maxCount}} usuarios)",
+    "progress": "Procesando... {{progress}}%",
+    "downloadReady": "¡Descarga lista!",
+    "securityNote": "Priorizamos tu privacidad - no se almacenan datos en nuestros servidores",
+    "limitNote": "Los usuarios gratuitos pueden exportar hasta {{maxCount}} usuarios por solicitud"
+  },
+  "progress": {
+    "pending": "Pendiente",
+    "analyzing": "Analizando Cuenta",
+    "scraping": "Obteniendo Datos",
+    "processing": "Procesando Datos",
+    "completed": "Completado",
+    "failed": "Fallido",
+    "preparingTask": "Inicializando tarea de exportación...",
+    "fetchingAccountInfo": "Obteniendo información de la cuenta...",
+    "fetchingFollowersList": "Obteniendo lista de seguidores...",
+    "generatingExcelFile": "Generando archivo Excel...",
+    "exportCompleted": "¡Exportación completada exitosamente!",
+    "exportFailed": "Error durante la exportación",
+    "progressLabel": "Progreso: {{progress}}%",
+    "estimatedTime": "Tiempo restante estimado: {{time}}",
+    "fileReady": "Archivo Excel listo, haz clic en el botón de descarga para obtener el archivo",
+    "checkUsernameAndRetry": "Verifica si el nombre de usuario es correcto, o inténtalo más tarde",
+    "steps": {
+      "analyzing": "Analizar Cuenta",
+      "scraping": "Obtener Datos",
+      "processing": "Procesar Datos",
+      "completed": "Completar Exportación"
+    }
+  },
+  "dataPreview": {
+    "followersTitle": "Lista de Seguidores",
+    "followingTitle": "Lista de Siguiendo",
+    "totalUsers": "Se encontraron {{count}} usuarios",
+    "showingFirst": "(mostrando los primeros {{count}})",
+    "noData": "Sin Datos",
+    "noDataDescription": "Primero ingresa un nombre de usuario de Instagram y haz clic en exportar",
+    "exportFailed": "Exportación Fallida",
+    "gettingData": "Obteniendo datos...",
+    "table": {
+      "username": "Nombre de Usuario",
+      "fullName": "Nombre Completo",
+      "verified": "Estado de Verificación",
+      "actions": "Acciones",
+      "verified_yes": "Verificado",
+      "verified_no": "No Verificado"
+    },
+    "pagination": {
+      "showing": "Mostrando {{start}} - {{end}} de {{total}} elementos",
+      "page": "Página {{current}} de {{total}}"
+    },
+    "downloadInfo": "El archivo se guardará como: {{filename}}",
+    "downloadLimit": "(exportando solo los primeros 200 usuarios)"
+  },
+  "validation": {
+    "invalidUsername": "Ingresa un nombre de usuario de Instagram válido",
+    "usernameRequired": "El nombre de usuario de Instagram es obligatorio",
+    "networkError": "Error de red. Inténtalo de nuevo.",
+    "unexpectedError": "Ocurrió un error inesperado"
+  },
+  "errors": {
+    "accountNotFound": "Cuenta no encontrada",
+    "privateAccount": "Esta cuenta es privada",
+    "rateLimitExceeded": "Demasiadas solicitudes. Inténtalo más tarde.",
+    "serverError": "Error del servidor. Inténtalo más tarde.",
+    "unknownError": "Ocurrió un error desconocido"
+  },
+  "footer": {
+    "madeWith": "Hecho con",
+    "forCreators": "para creadores y marketers de Instagram",
+    "copyright": "© {{year}} IGExportGuru. Todos los derechos reservados.",
+    "privacyNote": "Diseño que prioriza la privacidad, sin retención de datos"
+  }
+} 

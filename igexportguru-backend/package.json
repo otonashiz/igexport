@@ -1,0 +1,41 @@
+{
+  "name": "igexportguru-backend",
+  "version": "1.0.0",
+  "description": "IGExportGuru Backend API - Instagram data export service",
+  "main": "dist/index.js",
+  "scripts": {
+    "build": "tsc",
+    "start": "node dist/index.js",
+    "dev": "nodemon --exec ts-node src/index.ts",
+    "dev:watch": "nodemon --watch src --ext ts --exec ts-node src/index.ts",
+    "clean": "rm -rf dist",
+    "lint": "echo \"Linting not yet configured\"",
+    "test": "echo \"Tests not yet implemented\""
+  },
+  "keywords": ["instagram", "export", "followers", "following", "api"],
+  "author": "IGExportGuru Team",
+  "license": "MIT",
+  "dependencies": {
+    "compression": "^1.8.0",
+    "cors": "^2.8.5",
+    "dotenv": "^16.5.0",
+    "express": "^5.1.0",
+    "helmet": "^8.1.0",
+    "morgan": "^1.10.0",
+    "puppeteer": "^24.9.0",
+    "xlsx": "^0.18.5"
+  },
+  "devDependencies": {
+    "@types/compression": "^1.8.0",
+    "@types/cors": "^2.8.18",
+    "@types/express": "^5.0.2",
+    "@types/morgan": "^1.9.9",
+    "@types/node": "^22.15.21",
+    "nodemon": "^3.1.10",
+    "ts-node": "^10.9.2",
+    "typescript": "^5.8.3"
+  },
+  "engines": {
+    "node": ">=18.0.0"
+  }
+}

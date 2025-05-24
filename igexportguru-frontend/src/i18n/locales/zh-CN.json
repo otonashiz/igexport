@@ -1,0 +1,113 @@
+{
+  "common": {
+    "loading": "加载中...",
+    "error": "错误",
+    "success": "成功",
+    "cancel": "取消",
+    "confirm": "确认",
+    "retry": "重试",
+    "close": "关闭",
+    "download": "下载",
+    "viewProfile": "查看主页",
+    "viewAll": "查看全部"
+  },
+  "header": {
+    "title": "IGExportGuru",
+    "subtitle": "轻松导出Instagram列表"
+  },
+  "hero": {
+    "title": "导出Instagram列表",
+    "subtitle": "轻松便捷",
+    "description": "快速安全的工具，将Instagram关注者和关注列表导出为Excel格式",
+    "features": {
+      "oneClick": "一键导出",
+      "excelFormat": "Excel格式",
+      "securePrivate": "安全私密",
+      "multiLanguage": "多语言支持"
+    },
+    "stats": {
+      "users": "满意用户",
+      "exports": "成功导出",
+      "successRate": "成功率",
+      "avgTime": "平均用时"
+    }
+  },
+  "export": {
+    "inputLabel": "Instagram用户名或链接",
+    "inputPlaceholder": "输入 @用户名 或 instagram.com/用户名",
+    "followers": "关注者",
+    "following": "正在关注",
+    "exportButton": "导出 (最多{{maxCount}}个用户)",
+    "progress": "处理中... {{progress}}%",
+    "downloadReady": "下载就绪！",
+    "securityNote": "我们保护您的隐私 - 服务器不存储任何数据",
+    "limitNote": "免费用户每次最多可导出{{maxCount}}个用户"
+  },
+  "progress": {
+    "pending": "准备中",
+    "analyzing": "分析账户",
+    "scraping": "获取数据",
+    "processing": "处理数据",
+    "completed": "完成",
+    "failed": "失败",
+    "preparingTask": "正在初始化导出任务...",
+    "fetchingAccountInfo": "正在获取账户信息...",
+    "fetchingFollowersList": "正在获取关注者列表...",
+    "generatingExcelFile": "正在生成Excel文件...",
+    "exportCompleted": "导出成功完成！",
+    "exportFailed": "导出过程中出现错误",
+    "progressLabel": "进度: {{progress}}%",
+    "estimatedTime": "预计剩余时间: {{time}}",
+    "fileReady": "Excel文件已准备就绪，点击下载按钮获取文件",
+    "checkUsernameAndRetry": "请检查用户名是否正确，或稍后重试",
+    "steps": {
+      "analyzing": "分析账户",
+      "scraping": "获取数据",
+      "processing": "处理数据",
+      "completed": "完成导出"
+    }
+  },
+  "dataPreview": {
+    "followersTitle": "关注者列表",
+    "followingTitle": "关注列表",
+    "totalUsers": "共找到 {{count}} 个用户",
+    "showingFirst": "（显示前 {{count}} 个）",
+    "noData": "暂无数据",
+    "noDataDescription": "请先输入Instagram用户名并点击导出",
+    "exportFailed": "导出失败",
+    "gettingData": "正在获取数据...",
+    "table": {
+      "username": "用户名",
+      "fullName": "显示名称",
+      "verified": "认证状态",
+      "actions": "操作",
+      "verified_yes": "已认证",
+      "verified_no": "未认证"
+    },
+    "pagination": {
+      "showing": "显示第 {{start}} - {{end}} 项，共 {{total}} 项",
+      "page": "第 {{current}} 页，共 {{total}} 页"
+    },
+    "downloadInfo": "文件将保存为: {{filename}}",
+    "downloadLimit": "(仅导出前200个用户)"
+  },
+  "validation": {
+    "invalidUsername": "请输入有效的Instagram用户名",
+    "usernameRequired": "Instagram用户名为必填项",
+    "networkError": "网络错误，请重试。",
+    "unexpectedError": "发生意外错误"
+  },
+  "errors": {
+    "accountNotFound": "账户不存在",
+    "privateAccount": "此账户为私密账户",
+    "rateLimitExceeded": "请求过于频繁，请稍后重试。",
+    "serverError": "服务器错误，请稍后重试。",
+    "unknownError": "发生未知错误"
+  },
+  "footer": {
+    "madeWith": "用",
+    "forCreators": "为Instagram创作者和营销人员打造",
+    "copyright": "© {{year}} IGExportGuru. 保留所有权利。",
+    "privacyNote": "隐私优先设计，不保留数据"
+  }
+} 

@@ -1,0 +1,291 @@
+---
+description:
+globs:
+alwaysApply: false
+---
+# IGExportGuru - 技术栈说明文档
+
+## 📚 前端技术栈
+
+### 核心框架
+- **React.js 18+**: 现代化的UI库，支持函数组件和Hooks
+- **TypeScript**: 类型安全，提高代码质量和开发体验
+- **Vite**: 快速的构建工具，优秀的开发体验
+
+### 状态管理
+- **Zustand**: 轻量级状态管理库
+  - 简单的API
+  - TypeScript友好
+  - 无需复杂的样板代码
+
+### 样式解决方案
+- **Tailwind CSS**: 原子化CSS框架
+  - 快速开发
+  - 一致的设计系统
+  - 优秀的响应式支持
+- **PostCSS**: CSS后处理器
+- **Autoprefixer**: 自动添加浏览器前缀
+
+### UI组件库
+- **Headless UI**: 无样式组件库
+  - 与Tailwind完美配合
+  - 可访问性支持
+  - 自定义样式灵活
+
+### 图标系统
+- **Font Awesome 6.5+**: 主要图标库
+  - 丰富的图标选择
+  - Instagram等社交媒体图标
+  - CDN引入方式
+
+### 国际化
+- **react-i18next**: React国际化解决方案
+  - 支持多语言切换
+  - 自动语言检测
+  - 命名空间支持
+
+### 文件处理
+- **xlsx**: Excel文件生成和处理
+- **FileSaver.js**: 浏览器文件下载
+
+### 开发工具
+- **ESLint**: 代码质量检查
+- **Prettier**: 代码格式化
+- **TypeScript**: 静态类型检查
+
+## 🚀 后端技术栈
+
+### 运行环境
+- **Node.js 18+**: JavaScript运行环境
+- **Express.js**: Web应用框架
+  - 轻量级
+  - 中间件支持
+  - 易于扩展
+
+### 数据获取
+- **Puppeteer**: 无头浏览器自动化
+  - 模拟真实用户行为
+  - 绕过基本反爬机制
+  - 支持JavaScript渲染
+- **Axios**: HTTP客户端
+  - Promise支持
+  - 请求/响应拦截器
+  - 错误处理
+
+### 数据处理
+- **xlsx**: Excel文件生成
+- **Lodash**: 实用工具库
+- **Moment.js / Day.js**: 日期处理
+
+### 中间件
+- **cors**: 跨域资源共享
+- **helmet**: 安全头设置
+- **express-rate-limit**: 请求频率限制
+- **compression**: 响应压缩
+
+### 开发工具
+- **nodemon**: 开发时自动重启
+- **dotenv**: 环境变量管理
+
+## 🛠️ 开发工具链
+
+### 包管理器
+- **npm**: 包管理和脚本运行
+
+### 代码质量
+- **ESLint**: JavaScript/TypeScript代码检查
+- **Prettier**: 代码格式化统一
+- **Husky**: Git hooks管理
+- **lint-staged**: 提交前代码检查
+
+### 构建和部署
+- **Vite**: 前端构建工具
+- **Vercel**: 前端部署平台
+- **Railway/Heroku**: 后端部署平台
+
+## 📦 依赖版本管理
+
+### 前端核心依赖
+```json
+{
+  "react": "^18.2.0",
+  "react-dom": "^18.2.0",
+  "typescript": "^5.0.0",
+  "vite": "^5.0.0",
+  "tailwindcss": "^3.3.0",
+  "@headlessui/react": "^1.7.0",
+  "zustand": "^4.4.0",
+  "react-i18next": "^13.0.0",
+  "i18next": "^23.0.0",
+  "xlsx": "^0.18.0",
+  "file-saver": "^2.0.5"
+}
+```
+
+### 前端开发依赖
+```json
+{
+  "@types/react": "^18.2.0",
+  "@types/react-dom": "^18.2.0",
+  "@types/file-saver": "^2.0.7",
+  "@vitejs/plugin-react": "^4.0.0",
+  "autoprefixer": "^10.4.0",
+  "postcss": "^8.4.0",
+  "eslint": "^8.45.0",
+  "prettier": "^3.0.0"
+}
+```
+
+### 后端核心依赖
+```json
+{
+  "express": "^4.18.0",
+  "puppeteer": "^21.0.0",
+  "axios": "^1.5.0",
+  "cors": "^2.8.5",
+  "helmet": "^7.0.0",
+  "express-rate-limit": "^6.8.0",
+  "compression": "^1.7.4",
+  "xlsx": "^0.18.0",
+  "lodash": "^4.17.21",
+  "dayjs": "^1.11.0",
+  "dotenv": "^16.3.0"
+}
+```
+
+### 后端开发依赖
+```json
+{
+  "@types/express": "^4.17.0",
+  "@types/cors": "^2.8.0",
+  "@types/compression": "^1.7.0",
+  "@types/lodash": "^4.14.0",
+  "nodemon": "^3.0.0",
+  "ts-node": "^10.9.0",
+  "typescript": "^5.0.0"
+}
+```
+
+## 🔧 配置文件
+
+### Vite配置 (vite.config.ts)
+```typescript
+import { defineConfig } from 'vite'
+import react from '@vitejs/plugin-react'
+import path from 'path'
+
+export default defineConfig({
+  plugins: [react()],
+  resolve: {
+    alias: {
+      '@': path.resolve(__dirname, './src'),
+    },
+  },
+  server: {
+    port: 3000,
+    open: true,
+  },
+  build: {
+    outDir: 'dist',
+    sourcemap: false,
+    minify: 'terser',
+  },
+})
+```
+
+### Tailwind配置 (tailwind.config.js)
+```javascript
+module.exports = {
+  content: ['./index.html', './src/**/*.{js,ts,jsx,tsx}'],
+  theme: {
+    extend: {
+      colors: {
+        instagram: {
+          pink: '#E4405F',
+          purple: '#833AB4',
+          orange: '#F77737',
+        },
+      },
+      fontFamily: {
+        sans: ['Inter', 'system-ui', 'sans-serif'],
+      },
+    },
+  },
+  plugins: [],
+}
+```
+
+### TypeScript配置 (tsconfig.json)
+```json
+{
+  "compilerOptions": {
+    "target": "ES2020",
+    "useDefineForClassFields": true,
+    "lib": ["ES2020", "DOM", "DOM.Iterable"],
+    "module": "ESNext",
+    "skipLibCheck": true,
+    "moduleResolution": "bundler",
+    "allowImportingTsExtensions": true,
+    "resolveJsonModule": true,
+    "isolatedModules": true,
+    "noEmit": true,
+    "jsx": "react-jsx",
+    "strict": true,
+    "noUnusedLocals": true,
+    "noUnusedParameters": true,
+    "noFallthroughCasesInSwitch": true,
+    "baseUrl": ".",
+    "paths": {
+      "@/*": ["./src/*"]
+    }
+  },
+  "include": ["src"],
+  "references": [{ "path": "./tsconfig.node.json" }]
+}
+```
+
+## 🌐 部署策略
+
+### 前端部署 (Vercel)
+- **平台**: Vercel
+- **构建命令**: `npm run build`
+- **输出目录**: `dist`
+- **环境变量**: API_BASE_URL
+
+### 后端部署 (Railway)
+- **平台**: Railway
+- **启动命令**: `npm start`
+- **端口**: 环境变量 PORT
+- **环境变量**: NODE_ENV, PUPPETEER_ARGS
+
+## 📈 性能优化
+
+### 前端优化
+- **代码分割**: React.lazy和Suspense
+- **图片优化**: WebP格式支持
+- **缓存策略**: Service Worker
+- **包体积分析**: Bundle Analyzer
+
+### 后端优化
+- **请求缓存**: 内存缓存
+- **连接池**: 数据库连接池
+- **压缩**: Gzip压缩
+- **限流**: Rate Limiting
+
+## 🔒 安全考虑
+
+### 前端安全
+- **XSS防护**: DOMPurify
+- **HTTPS**: 强制HTTPS
+- **CSP**: 内容安全策略
+
+### 后端安全
+- **CORS**: 跨域限制
+- **Helmet**: 安全头设置
+- **输入验证**: 参数验证
+- **错误处理**: 不暴露敏感信息
+
+---
+
+*最后更新: 2024年12月*
+*版本: v1.0*

@@ -1,0 +1,554 @@
+---
+description:
+globs:
+alwaysApply: false
+---
+# IGExportGuru - 前端开发指南
+
+## 📁 项目结构
+
+### 目录组织
+```
+src/
+├── components/           # 可复用组件
+│   ├── ui/              # 基础UI组件
+│   │   ├── Button.tsx
+│   │   ├── Input.tsx
+│   │   ├── Table.tsx
+│   │   └── index.ts
+│   ├── features/        # 功能组件
+│   │   ├── ExportForm/
+│   │   ├── DataPreview/
+│   │   ├── LanguageSwitch/
+│   │   └── ProgressBar/
+│   └── layout/          # 布局组件
+│       ├── Header.tsx
+│       ├── Footer.tsx
+│       └── MainLayout.tsx
+├── hooks/               # 自定义Hooks
+│   ├── useInstagramData.ts
+│   ├── useLanguage.ts
+│   └── useExport.ts
+├── stores/              # Zustand状态管理
+│   ├── appStore.ts
+│   ├── exportStore.ts
+│   └── languageStore.ts
+├── types/               # TypeScript类型定义
+│   ├── instagram.ts
+│   ├── export.ts
+│   └── common.ts
+├── utils/               # 工具函数
+│   ├── validation.ts
+│   ├── formatters.ts
+│   ├── constants.ts
+│   └── api.ts
+├── locales/             # 国际化文件
+│   ├── en.json
+│   ├── zh-CN.json
+│   ├── zh-TW.json
+│   ├── it.json
+│   └── es.json
+├── styles/              # 样式文件
+│   ├── globals.css
+│   └── components.css
+├── App.tsx              # 主应用组件
+├── main.tsx             # 应用入口
+└── vite-env.d.ts        # Vite类型声明
+```
+
+## 🎯 组件设计原则
+
+### 组件分类
+1. **基础UI组件** (`components/ui/`)
+   - 完全可复用
+   - 无业务逻辑
+   - 只通过props接收数据
+   - 符合设计系统规范
+
+2. **功能组件** (`components/features/`)
+   - 包含业务逻辑
+   - 可能连接状态管理
+   - 特定功能导向
+
+3. **布局组件** (`components/layout/`)
+   - 页面结构组件
+   - 处理整体布局逻辑
+
+### 组件命名规范
+- 使用PascalCase：`ExportForm`、`DataPreview`
+- 组件文件名与组件名一致：`Button.tsx`
+- 目录使用PascalCase：`ExportForm/`
+
+### 组件模板
+```typescript
+// components/ui/Button.tsx
+import React from 'react';
+import { cva, type VariantProps } from 'class-variance-authority';
+
+const buttonVariants = cva(
+  // 基础样式
+  "inline-flex items-center justify-center rounded-lg font-medium transition-all duration-150 focus:outline-none focus:ring-2",
+  {
+    variants: {
+      variant: {
+        primary: "bg-gradient-to-r from-instagram-orange to-instagram-pink text-white hover:scale-[1.02] hover:shadow-lg",
+        secondary: "border border-gray-300 bg-white text-gray-700 hover:bg-gray-50",
+        ghost: "text-gray-700 hover:bg-gray-100",
+      },
+      size: {
+        sm: "h-9 px-3 text-sm",
+        md: "h-11 px-4 text-base",
+        lg: "h-12 px-6 text-lg",
+      },
+    },
+    defaultVariants: {
+      variant: "primary",
+      size: "md",
+    },
+  }
+);
+
+interface ButtonProps
+  extends React.ButtonHTMLAttributes<HTMLButtonElement>,
+    VariantProps<typeof buttonVariants> {
+  children: React.ReactNode;
+  loading?: boolean;
+}
+
+export const Button: React.FC<ButtonProps> = ({
+  className,
+  variant,
+  size,
+  children,
+  loading,
+  disabled,
+  ...props
+}) => {
+  return (
+    <button
+      className={buttonVariants({ variant, size, className })}
+      disabled={disabled || loading}
+      {...props}
+    >
+      {loading && (
+        <i className="fas fa-spinner fa-spin mr-2" aria-hidden="true" />
+      )}
+      {children}
+    </button>
+  );
+};
+```
+
+## 📊 状态管理规范
+
+### Zustand Store结构
+```typescript
+// stores/exportStore.ts
+import { create } from 'zustand';
+import { InstagramUser, ExportType } from '@/types/instagram';
+
+interface ExportState {
+  // 状态
+  username: string;
+  exportType: ExportType;
+  data: InstagramUser[];
+  isLoading: boolean;
+  progress: number;
+  error: string | null;
+  
+  // 动作
+  setUsername: (username: string) => void;
+  setExportType: (type: ExportType) => void;
+  setData: (data: InstagramUser[]) => void;
+  setLoading: (loading: boolean) => void;
+  setProgress: (progress: number) => void;
+  setError: (error: string | null) => void;
+  reset: () => void;
+}
+
+export const useExportStore = create<ExportState>((set) => ({
+  // 初始状态
+  username: '',
+  exportType: 'followers',
+  data: [],
+  isLoading: false,
+  progress: 0,
+  error: null,
+  
+  // 动作实现
+  setUsername: (username) => set({ username }),
+  setExportType: (exportType) => set({ exportType }),
+  setData: (data) => set({ data }),
+  setLoading: (isLoading) => set({ isLoading }),
+  setProgress: (progress) => set({ progress }),
+  setError: (error) => set({ error }),
+  reset: () => set({
+    username: '',
+    exportType: 'followers',
+    data: [],
+    isLoading: false,
+    progress: 0,
+    error: null,
+  }),
+}));
+```
+
+### Store使用规范
+- 每个Store专注单一职责
+- 使用TypeScript严格类型
+- 动作函数使用动词开头：`setXxx`、`updateXxx`、`resetXxx`
+- 避免在Store中直接进行API调用
+
+## 🎨 样式规范
+
+### Tailwind CSS使用原则
+1. **优先使用Tailwind类**
+   ```tsx
+   // ✅ 推荐
+   <div className="flex items-center justify-between p-4 bg-white rounded-lg shadow-sm">
+   
+   // ❌ 避免
+   <div style={{display: 'flex', alignItems: 'center'}}>
+   ```
+
+2. **响应式设计**
+   ```tsx
+   // 移动优先的响应式设计
+   <div className="w-full md:w-1/2 lg:w-1/3 xl:w-1/4">
+     <div className="text-sm md:text-base lg:text-lg">
+   ```
+
+3. **自定义CSS类**
+   ```css
+   /* styles/components.css */
+   @layer components {
+     .btn-instagram {
+       @apply bg-gradient-to-r from-instagram-orange to-instagram-pink text-white font-medium py-3 px-6 rounded-lg hover:scale-[1.02] transition-all duration-150;
+     }
+     
+     .input-field {
+       @apply w-full h-11 px-4 border border-gray-300 rounded-lg focus:border-instagram-pink focus:ring-2 focus:ring-instagram-pink/20 transition-colors;
+     }
+   }
+   ```
+
+### 设计令牌
+```typescript
+// utils/constants.ts
+export const DESIGN_TOKENS = {
+  colors: {
+    instagram: {
+      pink: '#E4405F',
+      purple: '#833AB4',
+      orange: '#F77737',
+      gradient: 'linear-gradient(45deg, #f09433 0%,#e6683c 25%,#dc2743 50%,#cc2366 75%,#bc1888 100%)',
+    },
+    neutral: {
+      50: '#FAFAFA',
+      100: '#F5F5F5',
+      200: '#E5E5E5',
+      300: '#D4D4D4',
+      400: '#A3A3A3',
+      500: '#737373',
+      600: '#525252',
+      700: '#404040',
+      800: '#262626',
+      900: '#171717',
+    },
+  },
+  spacing: {
+    xs: '4px',
+    sm: '8px',
+    md: '16px',
+    lg: '24px',
+    xl: '32px',
+    '2xl': '48px',
+    '3xl': '64px',
+  },
+  borderRadius: {
+    sm: '4px',
+    md: '8px',
+    lg: '12px',
+    xl: '16px',
+    full: '9999px',
+  },
+};
+```
+
+## 🔧 TypeScript规范
+
+### 类型定义
+```typescript
+// types/instagram.ts
+export interface InstagramUser {
+  id: string;
+  userName: string;
+  fullName: string;
+  profileUrl: string;
+  isVerified: boolean;
+  followerCount?: number;
+  followingCount?: number;
+  profilePicUrl?: string;
+}
+
+export type ExportType = 'followers' | 'following';
+
+export interface ExportOptions {
+  username: string;
+  type: ExportType;
+  maxCount: number;
+}
+
+export interface ExportResult {
+  data: InstagramUser[];
+  totalCount: number;
+  exportedCount: number;
+  timestamp: Date;
+}
+
+// types/common.ts
+export interface ApiResponse<T> {
+  success: boolean;
+  data?: T;
+  error?: string;
+  message?: string;
+}
+
+export interface PaginationParams {
+  page: number;
+  limit: number;
+}
+```
+
+### 组件Props类型
+```typescript
+// 基础Props
+interface BaseComponentProps {
+  className?: string;
+  children?: React.ReactNode;
+}
+
+// 扩展Props
+interface ButtonProps extends BaseComponentProps {
+  variant?: 'primary' | 'secondary' | 'ghost';
+  size?: 'sm' | 'md' | 'lg';
+  loading?: boolean;
+  onClick?: () => void;
+}
+
+// 泛型Props
+interface TableProps<T> extends BaseComponentProps {
+  data: T[];
+  columns: TableColumn<T>[];
+  onRowClick?: (item: T) => void;
+}
+```
+
+## 🌐 国际化规范
+
+### 翻译文件结构
+```json
+// locales/en.json
+{
+  "common": {
+    "loading": "Loading...",
+    "error": "Error",
+    "success": "Success",
+    "cancel": "Cancel",
+    "confirm": "Confirm"
+  },
+  "header": {
+    "title": "IGExportGuru",
+    "subtitle": "Export Instagram Lists Effortlessly"
+  },
+  "export": {
+    "inputPlaceholder": "Enter Instagram username or URL",
+    "followers": "Followers",
+    "following": "Following",
+    "exportButton": "Export (Max {{maxCount}} users)",
+    "progress": "Processing... {{progress}}%",
+    "downloadReady": "Download ready!"
+  },
+  "table": {
+    "username": "Username",
+    "fullName": "Full Name",
+    "verified": "Verified",
+    "profile": "Profile"
+  },
+  "errors": {
+    "invalidUsername": "Please enter a valid Instagram username",
+    "networkError": "Network error. Please try again.",
+    "noData": "No data found for this user"
+  }
+}
+```
+
+### i18n Hook使用
+```typescript
+// hooks/useLanguage.ts
+import { useTranslation } from 'react-i18next';
+
+export const useLanguage = () => {
+  const { t, i18n } = useTranslation();
+  
+  const changeLanguage = (lang: string) => {
+    i18n.changeLanguage(lang);
+    localStorage.setItem('language', lang);
+  };
+  
+  return {
+    t,
+    currentLanguage: i18n.language,
+    changeLanguage,
+    languages: [
+      { code: 'en', name: 'English' },
+      { code: 'zh-CN', name: '简体中文' },
+      { code: 'zh-TW', name: '繁體中文' },
+      { code: 'it', name: 'Italiano' },
+      { code: 'es', name: 'Español' },
+    ],
+  };
+};
+
+// 组件中使用
+const ExportForm = () => {
+  const { t } = useLanguage();
+  
+  return (
+    <div>
+      <input placeholder={t('export.inputPlaceholder')} />
+      <button>{t('export.exportButton', { maxCount: 200 })}</button>
+    </div>
+  );
+};
+```
+
+## 🔒 性能优化
+
+### 组件优化
+```typescript
+// 使用React.memo
+export const DataRow = React.memo<DataRowProps>(({ user, onClick }) => {
+  return (
+    <tr onClick={() => onClick(user)}>
+      <td>{user.userName}</td>
+      <td>{user.fullName}</td>
+    </tr>
+  );
+});
+
+// 使用useMemo缓存计算结果
+const DataPreview = ({ data }: { data: InstagramUser[] }) => {
+  const sortedData = useMemo(() => {
+    return data.sort((a, b) => a.userName.localeCompare(b.userName));
+  }, [data]);
+  
+  const stats = useMemo(() => ({
+    total: data.length,
+    verified: data.filter(user => user.isVerified).length,
+  }), [data]);
+  
+  return (
+    <div>
+      <p>Total: {stats.total}, Verified: {stats.verified}</p>
+      {sortedData.map(user => <DataRow key={user.id} user={user} />)}
+    </div>
+  );
+};
+
+// 使用useCallback缓存函数
+const ExportForm = () => {
+  const [username, setUsername] = useState('');
+  
+  const handleSubmit = useCallback((e: FormEvent) => {
+    e.preventDefault();
+    // 处理提交逻辑
+  }, [username]);
+  
+  return <form onSubmit={handleSubmit}>...</form>;
+};
+```
+
+### 懒加载
+```typescript
+// 路由懒加载
+const DataPreview = lazy(() => import('@/components/features/DataPreview'));
+
+// 组件中使用Suspense
+<Suspense fallback={<div>Loading...</div>}>
+  <DataPreview data={data} />
+</Suspense>
+```
+
+## 🧪 测试规范
+
+### 组件测试
+```typescript
+// __tests__/Button.test.tsx
+import { render, screen, fireEvent } from '@testing-library/react';
+import { Button } from '@/components/ui/Button';
+
+describe('Button', () => {
+  it('renders correctly', () => {
+    render(<Button>Click me</Button>);
+    expect(screen.getByRole('button')).toHaveTextContent('Click me');
+  });
+  
+  it('calls onClick when clicked', () => {
+    const handleClick = jest.fn();
+    render(<Button onClick={handleClick}>Click me</Button>);
+    
+    fireEvent.click(screen.getByRole('button'));
+    expect(handleClick).toHaveBeenCalledTimes(1);
+  });
+  
+  it('shows loading state', () => {
+    render(<Button loading>Click me</Button>);
+    expect(screen.getByRole('button')).toBeDisabled();
+    expect(screen.getByRole('button')).toHaveClass('fa-spinner');
+  });
+});
+```
+
+## 📝 代码质量
+
+### ESLint配置
+```json
+// .eslintrc.json
+{
+  "extends": [
+    "eslint:recommended",
+    "@typescript-eslint/recommended",
+    "plugin:react/recommended",
+    "plugin:react-hooks/recommended"
+  ],
+  "rules": {
+    "react/react-in-jsx-scope": "off",
+    "react/prop-types": "off",
+    "@typescript-eslint/no-unused-vars": "error",
+    "prefer-const": "error",
+    "no-var": "error"
+  }
+}
+```
+
+### Git提交规范
+```
+feat: 新功能
+fix: 修复bug
+docs: 文档更新
+style: 代码格式化
+refactor: 重构
+test: 测试
+chore: 构建工具或依赖更新
+
+示例:
+feat(export): add progress bar for data export
+fix(ui): resolve button loading state issue
+docs(readme): update installation instructions
+```
+
+---
+
+*最后更新: 2024年12月*
+*版本: v1.0*

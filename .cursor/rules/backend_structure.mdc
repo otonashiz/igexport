@@ -1,0 +1,796 @@
+---
+description:
+globs:
+alwaysApply: false
+---
+# IGExportGuru - 后端架构文档
+
+## 📁 项目结构
+
+### 目录组织
+```
+backend/
+├── src/
+│   ├── controllers/          # 控制器层
+│   │   ├── exportController.ts
+│   │   ├── healthController.ts
+│   │   └── index.ts
+│   ├── services/            # 服务层
+│   │   ├── instagramService.ts
+│   │   ├── exportService.ts
+│   │   ├── validationService.ts
+│   │   └── fileService.ts
+│   ├── utils/               # 工具函数
+│   │   ├── scraper.ts
+│   │   ├── validator.ts
+│   │   ├── formatter.ts
+│   │   ├── constants.ts
+│   │   └── logger.ts
+│   ├── types/               # TypeScript类型定义
+│   │   ├── instagram.ts
+│   │   ├── api.ts
+│   │   └── common.ts
+│   ├── middleware/          # 中间件
+│   │   ├── auth.ts
+│   │   ├── validation.ts
+│   │   ├── rateLimit.ts
+│   │   └── errorHandler.ts
+│   ├── config/              # 配置文件
+│   │   ├── database.ts
+│   │   ├── cache.ts
+│   │   └── environment.ts
+│   └── app.ts               # Express应用配置
+├── tests/                   # 测试文件
+│   ├── unit/
+│   ├── integration/
+│   └── __mocks__/
+├── dist/                    # 编译输出
+├── package.json
+├── tsconfig.json
+├── .env.example
+└── README.md
+```
+
+## 🎯 API设计规范
+
+### RESTful API结构
+```typescript
+// API路由设计
+GET    /api/health              # 健康检查
+POST   /api/export/analyze      # 分析Instagram账户
+POST   /api/export/followers    # 导出关注者
+POST   /api/export/following    # 导出关注列表
+GET    /api/export/status/:id   # 查询导出状态
+GET    /api/export/download/:id # 下载导出文件
+```
+
+### 控制器实现
+```typescript
+// src/controllers/exportController.ts
+import { Request, Response } from 'express';
+import { InstagramService } from '../services/instagramService';
+import { ExportService } from '../services/exportService';
+import { ValidationService } from '../services/validationService';
+import { ApiResponse, ExportRequest, ExportResult } from '../types/api';
+
+export class ExportController {
+  private instagramService: InstagramService;
+  private exportService: ExportService;
+  private validationService: ValidationService;
+
+  constructor() {
+    this.instagramService = new InstagramService();
+    this.exportService = new ExportService();
+    this.validationService = new ValidationService();
+  }
+
+  // 分析Instagram账户
+  public analyzeAccount = async (req: Request, res: Response): Promise<void> => {
+    try {
+      const { username } = req.body;
+      
+      // 验证输入
+      const validationResult = this.validationService.validateUsername(username);
+      if (!validationResult.isValid) {
+        res.status(400).json({
+          success: false,
+          error: validationResult.error,
+        } as ApiResponse<null>);
+        return;
+      }
+
+      // 获取账户信息
+      const accountInfo = await this.instagramService.getAccountInfo(username);
+      
+      res.json({
+        success: true,
+        data: accountInfo,
+      } as ApiResponse<typeof accountInfo>);
+    } catch (error) {
+      this.handleError(res, error);
+    }
+  };
+
+  // 导出关注者
+  public exportFollowers = async (req: Request, res: Response): Promise<void> => {
+    try {
+      const exportRequest: ExportRequest = req.body;
+      
+      // 验证请求
+      const validationResult = this.validationService.validateExportRequest(exportRequest);
+      if (!validationResult.isValid) {
+        res.status(400).json({
+          success: false,
+          error: validationResult.error,
+        } as ApiResponse<null>);
+        return;
+      }
+
+      // 创建导出任务
+      const taskId = await this.exportService.createExportTask(exportRequest);
+      
+      // 异步执行导出
+      this.executeExport(taskId, exportRequest);
+      
+      res.json({
+        success: true,
+        data: { taskId, status: 'processing' },
+      } as ApiResponse<{ taskId: string; status: string }>);
+    } catch (error) {
+      this.handleError(res, error);
+    }
+  };
+
+  // 查询导出状态
+  public getExportStatus = async (req: Request, res: Response): Promise<void> => {
+    try {
+      const { id } = req.params;
+      const status = await this.exportService.getTaskStatus(id);
+      
+      res.json({
+        success: true,
+        data: status,
+      } as ApiResponse<typeof status>);
+    } catch (error) {
+      this.handleError(res, error);
+    }
+  };
+
+  // 下载导出文件
+  public downloadExport = async (req: Request, res: Response): Promise<void> => {
+    try {
+      const { id } = req.params;
+      const filePath = await this.exportService.getExportFile(id);
+      
+      res.download(filePath, (err) => {
+        if (err) {
+          this.handleError(res, err);
+        }
+      });
+    } catch (error) {
+      this.handleError(res, error);
+    }
+  };
+
+  private executeExport = async (taskId: string, request: ExportRequest): Promise<void> => {
+    try {
+      await this.exportService.updateTaskStatus(taskId, 'processing');
+      
+      // 获取Instagram数据
+      const data = await this.instagramService.getFollowers(
+        request.username,
+        request.maxCount || 200
+      );
+      
+      // 生成Excel文件
+      const filePath = await this.exportService.generateExcelFile(taskId, data);
+      
+      await this.exportService.updateTaskStatus(taskId, 'completed', { filePath });
+    } catch (error) {
+      await this.exportService.updateTaskStatus(taskId, 'failed', { error: error.message });
+    }
+  };
+
+  private handleError = (res: Response, error: any): void => {
+    console.error('Export Controller Error:', error);
+    res.status(500).json({
+      success: false,
+      error: 'Internal server error',
+    } as ApiResponse<null>);
+  };
+}
+```
+
+## 🔧 服务层设计
+
+### Instagram数据服务
+```typescript
+// src/services/instagramService.ts
+import puppeteer, { Browser, Page } from 'puppeteer';
+import { InstagramUser, AccountInfo } from '../types/instagram';
+import { Logger } from '../utils/logger';
+
+export class InstagramService {
+  private browser: Browser | null = null;
+  private logger: Logger;
+
+  constructor() {
+    this.logger = new Logger('InstagramService');
+  }
+
+  // 初始化浏览器
+  private async initBrowser(): Promise<Browser> {
+    if (!this.browser) {
+      this.browser = await puppeteer.launch({
+        headless: true,
+        args: [
+          '--no-sandbox',
+          '--disable-setuid-sandbox',
+          '--disable-dev-shm-usage',
+          '--disable-accelerated-2d-canvas',
+          '--no-first-run',
+          '--no-zygote',
+          '--single-process',
+          '--disable-gpu',
+        ],
+      });
+    }
+    return this.browser;
+  }
+
+  // 获取账户基本信息
+  public async getAccountInfo(username: string): Promise<AccountInfo> {
+    const browser = await this.initBrowser();
+    const page = await browser.newPage();
+
+    try {
+      // 设置用户代理
+      await page.setUserAgent(
+        'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/91.0.4472.124 Safari/537.36'
+      );
+
+      // 访问Instagram个人资料页面
+      const url = `https://www.instagram.com/${username}/`;
+      await page.goto(url, { waitUntil: 'networkidle2' });
+
+      // 等待页面加载
+      await page.waitForSelector('article', { timeout: 10000 });
+
+      // 提取账户信息
+      const accountInfo = await page.evaluate(() => {
+        const getTextContent = (selector: string): string => {
+          const element = document.querySelector(selector);
+          return element?.textContent?.trim() || '';
+        };
+
+        const getFollowerCount = (): number => {
+          const followerElement = document.querySelector('a[href$="/followers/"] span');
+          const text = followerElement?.textContent?.trim() || '0';
+          return parseInt(text.replace(/[,\s]/g, '')) || 0;
+        };
+
+        const getFollowingCount = (): number => {
+          const followingElement = document.querySelector('a[href$="/following/"] span');
+          const text = followingElement?.textContent?.trim() || '0';
+          return parseInt(text.replace(/[,\s]/g, '')) || 0;
+        };
+
+        return {
+          userName: window.location.pathname.split('/')[1],
+          fullName: getTextContent('h2'),
+          isVerified: !!document.querySelector('[data-testid="verifiedBadge"]'),
+          followerCount: getFollowerCount(),
+          followingCount: getFollowingCount(),
+          isPrivate: !!document.querySelector('[data-testid="private_account"]'),
+        };
+      });
+
+      return {
+        ...accountInfo,
+        profileUrl: url,
+      };
+    } catch (error) {
+      this.logger.error('Failed to get account info', error);
+      throw new Error('Failed to fetch Instagram account information');
+    } finally {
+      await page.close();
+    }
+  }
+
+  // 获取关注者列表
+  public async getFollowers(username: string, maxCount: number = 200): Promise<InstagramUser[]> {
+    const browser = await this.initBrowser();
+    const page = await browser.newPage();
+
+    try {
+      await page.setUserAgent(
+        'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/91.0.4472.124 Safari/537.36'
+      );
+
+      // 访问关注者页面
+      const url = `https://www.instagram.com/${username}/followers/`;
+      await page.goto(url, { waitUntil: 'networkidle2' });
+
+      // 检查是否为私人账户
+      const isPrivate = await page.$('[data-testid="private_account"]');
+      if (isPrivate) {
+        throw new Error('This account is private');
+      }
+
+      // 等待关注者列表加载
+      await page.waitForSelector('[role="dialog"]', { timeout: 10000 });
+
+      // 滚动加载更多关注者
+      const followers: InstagramUser[] = [];
+      let previousCount = 0;
+      let retryCount = 0;
+
+      while (followers.length < maxCount && retryCount < 10) {
+        // 提取当前页面的关注者
+        const newFollowers = await page.evaluate(() => {
+          const followerElements = document.querySelectorAll('[role="dialog"] [role="button"]');
+          const users: any[] = [];
+
+          followerElements.forEach((element) => {
+            const usernameElement = element.querySelector('a[role="link"]');
+            const fullNameElement = element.querySelector('span[dir="auto"]');
+            const verifiedElement = element.querySelector('[data-testid="verifiedBadge"]');
+
+            if (usernameElement) {
+              const username = usernameElement.getAttribute('href')?.split('/')[1] || '';
+              users.push({
+                id: username,
+                userName: username,
+                fullName: fullNameElement?.textContent?.trim() || '',
+                profileUrl: `https://www.instagram.com/${username}/`,
+                isVerified: !!verifiedElement,
+              });
+            }
+          });
+
+          return users;
+        });
+
+        // 添加新的关注者（去重）
+        newFollowers.forEach((follower) => {
+          if (!followers.find((f) => f.userName === follower.userName)) {
+            followers.push(follower);
+          }
+        });
+
+        // 检查是否有新的关注者加载
+        if (followers.length === previousCount) {
+          retryCount++;
+        } else {
+          retryCount = 0;
+          previousCount = followers.length;
+        }
+
+        // 滚动到底部加载更多
+        await page.evaluate(() => {
+          const dialog = document.querySelector('[role="dialog"]');
+          if (dialog) {
+            dialog.scrollTop = dialog.scrollHeight;
+          }
+        });
+
+        // 等待新内容加载
+        await page.waitForTimeout(2000);
+      }
+
+      return followers.slice(0, maxCount);
+    } catch (error) {
+      this.logger.error('Failed to get followers', error);
+      throw new Error('Failed to fetch followers list');
+    } finally {
+      await page.close();
+    }
+  }
+
+  // 清理资源
+  public async cleanup(): Promise<void> {
+    if (this.browser) {
+      await this.browser.close();
+      this.browser = null;
+    }
+  }
+}
+```
+
+### 导出服务
+```typescript
+// src/services/exportService.ts
+import * as XLSX from 'xlsx';
+import * as path from 'path';
+import * as fs from 'fs/promises';
+import { v4 as uuidv4 } from 'uuid';
+import { InstagramUser } from '../types/instagram';
+import { ExportTask, ExportStatus } from '../types/export';
+
+export class ExportService {
+  private tasks: Map<string, ExportTask> = new Map();
+  private exportDir: string;
+
+  constructor() {
+    this.exportDir = path.join(process.cwd(), 'exports');
+    this.ensureExportDirectory();
+  }
+
+  // 确保导出目录存在
+  private async ensureExportDirectory(): Promise<void> {
+    try {
+      await fs.access(this.exportDir);
+    } catch {
+      await fs.mkdir(this.exportDir, { recursive: true });
+    }
+  }
+
+  // 创建导出任务
+  public async createExportTask(request: any): Promise<string> {
+    const taskId = uuidv4();
+    const task: ExportTask = {
+      id: taskId,
+      status: 'pending',
+      createdAt: new Date(),
+      request,
+    };
+
+    this.tasks.set(taskId, task);
+    return taskId;
+  }
+
+  // 更新任务状态
+  public async updateTaskStatus(
+    taskId: string,
+    status: ExportStatus,
+    data?: any
+  ): Promise<void> {
+    const task = this.tasks.get(taskId);
+    if (task) {
+      task.status = status;
+      task.updatedAt = new Date();
+      if (data) {
+        task.result = data;
+      }
+      this.tasks.set(taskId, task);
+    }
+  }
+
+  // 获取任务状态
+  public async getTaskStatus(taskId: string): Promise<ExportTask | null> {
+    return this.tasks.get(taskId) || null;
+  }
+
+  // 生成Excel文件
+  public async generateExcelFile(
+    taskId: string,
+    data: InstagramUser[]
+  ): Promise<string> {
+    try {
+      // 准备Excel数据
+      const worksheetData = [
+        ['ID', 'Username', 'Full Name', 'Profile URL', 'Verified'], // 表头
+        ...data.map((user) => [
+          user.id,
+          user.userName,
+          user.fullName,
+          user.profileUrl,
+          user.isVerified ? 'Yes' : 'No',
+        ]),
+      ];
+
+      // 创建工作簿和工作表
+      const workbook = XLSX.utils.book_new();
+      const worksheet = XLSX.utils.aoa_to_sheet(worksheetData);
+
+      // 设置列宽
+      worksheet['!cols'] = [
+        { width: 15 }, // ID
+        { width: 20 }, // Username
+        { width: 25 }, // Full Name
+        { width: 40 }, // Profile URL
+        { width: 10 }, // Verified
+      ];
+
+      // 设置表头样式
+      const headerStyle = {
+        font: { bold: true },
+        fill: { fgColor: { rgb: 'E4405F' } },
+        alignment: { horizontal: 'center' },
+      };
+
+      // 应用表头样式
+      for (let col = 0; col < 5; col++) {
+        const cellAddress = XLSX.utils.encode_cell({ r: 0, c: col });
+        if (!worksheet[cellAddress]) worksheet[cellAddress] = {};
+        worksheet[cellAddress].s = headerStyle;
+      }
+
+      // 添加工作表到工作簿
+      XLSX.utils.book_append_sheet(workbook, worksheet, 'Instagram Data');
+
+      // 生成文件名和路径
+      const timestamp = new Date().toISOString().split('T')[0];
+      const filename = `instagram_export_${taskId}_${timestamp}.xlsx`;
+      const filePath = path.join(this.exportDir, filename);
+
+      // 写入文件
+      XLSX.writeFile(workbook, filePath);
+
+      return filePath;
+    } catch (error) {
+      throw new Error(`Failed to generate Excel file: ${error.message}`);
+    }
+  }
+
+  // 获取导出文件
+  public async getExportFile(taskId: string): Promise<string> {
+    const task = this.tasks.get(taskId);
+    if (!task || !task.result?.filePath) {
+      throw new Error('Export file not found');
+    }
+
+    // 检查文件是否存在
+    try {
+      await fs.access(task.result.filePath);
+      return task.result.filePath;
+    } catch {
+      throw new Error('Export file has been deleted');
+    }
+  }
+
+  // 清理过期任务
+  public async cleanupExpiredTasks(): Promise<void> {
+    const now = new Date();
+    const expiredTasks: string[] = [];
+
+    this.tasks.forEach((task, taskId) => {
+      const ageInHours = (now.getTime() - task.createdAt.getTime()) / (1000 * 60 * 60);
+      if (ageInHours > 24) { // 24小时后清理
+        expiredTasks.push(taskId);
+      }
+    });
+
+    // 删除过期任务和文件
+    for (const taskId of expiredTasks) {
+      const task = this.tasks.get(taskId);
+      if (task?.result?.filePath) {
+        try {
+          await fs.unlink(task.result.filePath);
+        } catch {
+          // 文件已被删除，忽略错误
+        }
+      }
+      this.tasks.delete(taskId);
+    }
+  }
+}
+```
+
+## 🛡️ 安全策略
+
+### 输入验证
+```typescript
+// src/services/validationService.ts
+export class ValidationService {
+  // 验证Instagram用户名
+  public validateUsername(username: string): ValidationResult {
+    if (!username || typeof username !== 'string') {
+      return { isValid: false, error: 'Username is required' };
+    }
+
+    // 清理用户名
+    const cleanUsername = username
+      .replace(/^https?:\/\/(www\.)?instagram\.com\//, '')
+      .replace(/\/$/, '')
+      .trim();
+
+    // 验证用户名格式
+    const usernameRegex = /^[a-zA-Z0-9._]{1,30}$/;
+    if (!usernameRegex.test(cleanUsername)) {
+      return {
+        isValid: false,
+        error: 'Invalid username format. Only letters, numbers, dots and underscores are allowed.',
+      };
+    }
+
+    return { isValid: true, cleanValue: cleanUsername };
+  }
+
+  // 验证导出请求
+  public validateExportRequest(request: any): ValidationResult {
+    const usernameValidation = this.validateUsername(request.username);
+    if (!usernameValidation.isValid) {
+      return usernameValidation;
+    }
+
+    const maxCount = parseInt(request.maxCount) || 200;
+    if (maxCount < 1 || maxCount > 200) {
+      return {
+        isValid: false,
+        error: 'Max count must be between 1 and 200',
+      };
+    }
+
+    return { isValid: true };
+  }
+}
+```
+
+### 请求限制中间件
+```typescript
+// src/middleware/rateLimit.ts
+import rateLimit from 'express-rate-limit';
+
+// 通用限制
+export const generalLimiter = rateLimit({
+  windowMs: 15 * 60 * 1000, // 15分钟
+  max: 100, // 限制每个IP 15分钟内最多100个请求
+  message: {
+    success: false,
+    error: 'Too many requests, please try again later.',
+  },
+});
+
+// 导出API限制
+export const exportLimiter = rateLimit({
+  windowMs: 60 * 60 * 1000, // 1小时
+  max: 5, // 限制每个IP 1小时内最多5次导出
+  message: {
+    success: false,
+    error: 'Export limit exceeded. Please try again in an hour.',
+  },
+});
+
+// 分析API限制
+export const analyzeLimiter = rateLimit({
+  windowMs: 5 * 60 * 1000, // 5分钟
+  max: 10, // 限制每个IP 5分钟内最多10次分析
+  message: {
+    success: false,
+    error: 'Analysis limit exceeded. Please try again in 5 minutes.',
+  },
+});
+```
+
+### 错误处理中间件
+```typescript
+// src/middleware/errorHandler.ts
+import { Request, Response, NextFunction } from 'express';
+import { Logger } from '../utils/logger';
+
+const logger = new Logger('ErrorHandler');
+
+export const errorHandler = (
+  error: Error,
+  req: Request,
+  res: Response,
+  next: NextFunction
+): void => {
+  logger.error('API Error:', {
+    error: error.message,
+    stack: error.stack,
+    url: req.url,
+    method: req.method,
+    ip: req.ip,
+  });
+
+  // 根据错误类型返回不同的响应
+  if (error.name === 'ValidationError') {
+    res.status(400).json({
+      success: false,
+      error: error.message,
+    });
+  } else if (error.name === 'RateLimitError') {
+    res.status(429).json({
+      success: false,
+      error: 'Too many requests',
+    });
+  } else {
+    res.status(500).json({
+      success: false,
+      error: 'Internal server error',
+    });
+  }
+};
+```
+
+## 📊 监控和日志
+
+### 日志系统
+```typescript
+// src/utils/logger.ts
+export class Logger {
+  private context: string;
+
+  constructor(context: string) {
+    this.context = context;
+  }
+
+  private formatMessage(level: string, message: string, data?: any): string {
+    const timestamp = new Date().toISOString();
+    const logData = data ? ` | Data: ${JSON.stringify(data)}` : '';
+    return `[${timestamp}] [${level}] [${this.context}] ${message}${logData}`;
+  }
+
+  public info(message: string, data?: any): void {
+    console.log(this.formatMessage('INFO', message, data));
+  }
+
+  public error(message: string, error?: any): void {
+    console.error(this.formatMessage('ERROR', message, error));
+  }
+
+  public warn(message: string, data?: any): void {
+    console.warn(this.formatMessage('WARN', message, data));
+  }
+
+  public debug(message: string, data?: any): void {
+    if (process.env.NODE_ENV === 'development') {
+      console.debug(this.formatMessage('DEBUG', message, data));
+    }
+  }
+}
+```
+
+## 🚀 部署配置
+
+### Docker配置
+```dockerfile
+# Dockerfile
+FROM node:18-alpine
+
+# 安装Puppeteer依赖
+RUN apk add --no-cache \
+    chromium \
+    nss \
+    freetype \
+    freetype-dev \
+    harfbuzz \
+    ca-certificates \
+    ttf-freefont
+
+# 设置Puppeteer使用系统Chromium
+ENV PUPPETEER_SKIP_CHROMIUM_DOWNLOAD=true \
+    PUPPETEER_EXECUTABLE_PATH=/usr/bin/chromium-browser
+
+WORKDIR /app
+
+COPY package*.json ./
+RUN npm ci --only=production
+
+COPY . .
+RUN npm run build
+
+EXPOSE 3001
+
+CMD ["npm", "start"]
+```
+
+### 环境变量
+```bash
+# .env.example
+NODE_ENV=production
+PORT=3001
+API_BASE_URL=http://localhost:3001
+
+# 安全配置
+CORS_ORIGIN=http://localhost:3000
+RATE_LIMIT_ENABLED=true
+
+# Puppeteer配置
+PUPPETEER_ARGS=--no-sandbox,--disable-setuid-sandbox,--disable-dev-shm-usage
+
+# 日志配置
+LOG_LEVEL=info
+LOG_FILE=logs/app.log
+
+# 文件存储
+EXPORT_DIR=./exports
+MAX_FILE_AGE_HOURS=24
+```
+
+---
+
+*最后更新: 2024年12月*
+*版本: v1.0*
