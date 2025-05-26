@@ -8,10 +8,10 @@
 @layer base {
   html {
     font-family: 'Inter', system-ui, sans-serif;
-  }
-  
-  body {
-    margin: 0;
+}
+
+body {
+  margin: 0;
     padding: 0;
     background-color: #FAFAFA;
     color: #171717;
@@ -22,14 +22,14 @@
   
   * {
     box-sizing: border-box;
-  }
-  
-  button {
+}
+
+button {
     cursor: pointer;
   }
   
   input, textarea {
-    font-family: inherit;
+  font-family: inherit;
   }
 }
 
@@ -45,7 +45,7 @@
   
   .card {
     @apply bg-white rounded-lg shadow-sm border border-neutral-200 p-6;
-  }
+}
   
   .loading-skeleton {
     @apply animate-pulse bg-neutral-200 rounded;
@@ -53,7 +53,7 @@
 
   .ig-gradient-bg {
     background: linear-gradient(to right, #F77737, #E4405F);
-  }
+}
   
   .ig-gradient-text {
     background: linear-gradient(45deg, #f09433 0%, #e6683c 25%, #dc2743 50%, #cc2366 75%, #bc1888 100%);
@@ -73,7 +73,7 @@
   
   .shadow-instagram {
     box-shadow: 0 4px 20px rgba(228, 64, 95, 0.3);
-  }
+}
 }
 
 /* Custom radio button styles */
@@ -91,7 +91,7 @@ input[type="radio"] {
 input[type="radio"]:checked {
   border-color: #e4405f;
   background-color: #e4405f;
-}
+  }
 
 input[type="radio"]:checked::before {
   content: '';

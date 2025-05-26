@@ -107,7 +107,41 @@
   "footer": {
     "madeWith": "用",
     "forCreators": "为Instagram创作者和营销人员打造",
-    "copyright": "© {{year}} IGExportGuru. 保留所有权利。",
-    "privacyNote": "隐私优先设计，不保留数据"
+    "copyright": "© {{year}}",
+    "allRightsReserved": "保留所有权利",
+    "privacyNote": "隐私优先设计，不保留数据",
+    "description": "最快速、最安全的Instagram关注者和关注列表导出工具，支持Excel格式。",
+    "links": {
+      "usage": "使用说明",
+      "legal": "法律条款",
+      "support": "技术支持",
+      "howToUse": "使用方法",
+      "faq": "常见问题",
+      "limitations": "使用限制",
+      "privacy": "隐私政策",
+      "terms": "服务条款",
+      "disclaimer": "免责声明",
+      "contact": "联系我们",
+      "feedback": "意见反馈",
+      "bug": "问题报告"
+    },
+    "disclaimer": {
+      "title": "重要提示",
+      "content": "本工具仅用于教育和研究目的。请尊重Instagram的服务条款和用户隐私。我们不对任何误用行为承担责任。"
+    },
+    "limits": {
+      "publicOnly": {
+        "title": "仅支持公开账户",
+        "desc": "只能导出公开Instagram账户的数据"
+      },
+      "maxCount": {
+        "title": "最多200个用户",
+        "desc": "每次导出最多200个用户，确保快速处理"
+      },
+      "privacy": {
+        "title": "隐私优先",
+        "desc": "服务器不存储数据，立即下载文件"
+      }
+    }
   }
 } 

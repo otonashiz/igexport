@@ -7,6 +7,8 @@ export default {
         'instagram-pink': '#E4405F',
         'instagram-purple': '#833AB4',
         'instagram-orange': '#F77737',
+        'instagram-primary': '#E4405F',
+        'instagram-secondary': '#833AB4',
         neutral: {
           50: '#FAFAFA',
           100: '#F5F5F5',
@@ -37,6 +39,20 @@ export default {
         md: '8px',
         lg: '12px',
         xl: '16px',
+      },
+      animation: {
+        'shimmer': 'shimmer 1.5s infinite',
+        'slide': 'slide 2s infinite',
+      },
+      keyframes: {
+        shimmer: {
+          '0%': { transform: 'translateX(-100%)' },
+          '100%': { transform: 'translateX(100%)' },
+        },
+        slide: {
+          '0%': { transform: 'translateX(-100%)' },
+          '100%': { transform: 'translateX(200%)' },
+        },
       },
     },
   },

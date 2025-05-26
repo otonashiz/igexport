@@ -107,7 +107,41 @@
   "footer": {
     "madeWith": "Made with",
     "forCreators": "for Instagram creators and marketers",
-    "copyright": "© {{year}} IGExportGuru. All rights reserved.",
-    "privacyNote": "Privacy-first design, no data retention"
+    "copyright": "© {{year}}",
+    "allRightsReserved": "All rights reserved",
+    "privacyNote": "Privacy-first design, no data retention",
+    "description": "The fastest and most secure way to export Instagram followers and following lists to Excel format.",
+    "links": {
+      "usage": "Usage",
+      "legal": "Legal",
+      "support": "Support",
+      "howToUse": "How to Use",
+      "faq": "FAQ",
+      "limitations": "Limitations",
+      "privacy": "Privacy Policy",
+      "terms": "Terms of Service",
+      "disclaimer": "Disclaimer",
+      "contact": "Contact Us",
+      "feedback": "Feedback",
+      "bug": "Report Bug"
+    },
+    "disclaimer": {
+      "title": "Important Notice",
+      "content": "This tool is for educational and research purposes only. Please respect Instagram's terms of service and user privacy. We are not responsible for any misuse of this tool."
+    },
+    "limits": {
+      "publicOnly": {
+        "title": "Public Accounts Only",
+        "desc": "Can only export data from public Instagram accounts"
+      },
+      "maxCount": {
+        "title": "200 Users Limit",
+        "desc": "Maximum 200 users per export to ensure fast processing"
+      },
+      "privacy": {
+        "title": "Privacy First",
+        "desc": "No data stored on our servers, immediate file download"
+      }
+    }
   }
 } 
